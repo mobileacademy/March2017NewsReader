@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="divider_height">2dp</dimen>
+    <dimen name="min_clickable_size">48dp</dimen>
+    <dimen name="small_pad">4dp</dimen>
+</resources>
