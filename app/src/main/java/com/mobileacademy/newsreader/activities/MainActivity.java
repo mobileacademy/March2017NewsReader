@@ -26,15 +26,18 @@ public class MainActivity extends AppCompatActivity {
         ArticleAdapter articleAdapter = new ArticleAdapter(this, list);
         listView.setAdapter(articleAdapter);
 
-        //list.add(new Article("Mobile Academy", System.currentTimeMillis()));
+        list.add(new Article("Mobile Academy", System.currentTimeMillis()));
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, list.get(position).getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, list.get(position - 1).getName(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        View header = getLayoutInflater().inflate(R.layout.header, null);
+        listView.addHeaderView(header);
 
     }
 
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private List<String> getPublications(){
+    private List<String> getPublications() {
         List<String> list = new ArrayList<>();
 
         list.add("Hacker News");
