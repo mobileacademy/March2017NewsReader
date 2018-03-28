@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">NewsReader</string>
     <string name="refresh">Refresh</string>
+    <string name="whats_new">What\'s new</string>
+    <string name="settings">Settings</string>
     <string name="articles">Titles for today: </string>
 </resources>

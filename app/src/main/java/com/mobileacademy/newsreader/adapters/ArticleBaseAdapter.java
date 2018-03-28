@@ -19,7 +19,7 @@ import java.util.List;
  * Created by Daniela on 3/24/18.
  */
 
-public class ArticleAdapter extends BaseAdapter {
+public class ArticleBaseAdapter extends BaseAdapter {
 
 
     private List<Article> articleList;
@@ -27,7 +27,7 @@ public class ArticleAdapter extends BaseAdapter {
     private LayoutInflater inflater;
 
 
-    public ArticleAdapter(Context context, List<Article> articleList) {
+    public ArticleBaseAdapter(Context context, List<Article> articleList) {
         this.context = context;
         this.articleList = articleList;
         inflater = LayoutInflater.from(context);
