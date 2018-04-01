@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
 //        onBackPressed()
+
+        drawerLayout.openDrawer(GravityCompat.START);
         return super.onSupportNavigateUp();
     }
 
@@ -100,16 +102,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case android.R.id.home: {
-                drawerLayout.openDrawer(GravityCompat.START);
-                break;
-            }
 
             case R.id.menu_item_refresh: {
                 Toast.makeText(this, "Refresh", Toast.LENGTH_SHORT).show();
                 Intent service = new Intent(this, CounterService.class);
-                //service.setAction(CounterService.ACTION_COUNT);
-                this.startService(service);
+                startService(service);
                 return true;
             }
 
