@@ -12,9 +12,16 @@
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.ListViewActivity" />
+
+        <service
+            android:name=".services.CounterService"
+            android:enabled="true"
+            android:exported="false"></service>
     </application>
 
 </manifest>
