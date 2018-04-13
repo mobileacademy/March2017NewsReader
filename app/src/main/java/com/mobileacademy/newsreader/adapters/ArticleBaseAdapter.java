@@ -11,8 +11,6 @@ import android.widget.TextView;
 import com.mobileacademy.newsreader.R;
 import com.mobileacademy.newsreader.models.Article;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 /**
@@ -72,7 +70,6 @@ public class ArticleBaseAdapter extends BaseAdapter {
             }
 
             ViewHolder holder = new ViewHolder();
-            holder.date = convertView.findViewById(R.id.tv_date);
             holder.title = convertView.findViewById(R.id.tv_title);
             convertView.setTag(holder);
 
@@ -81,9 +78,7 @@ public class ArticleBaseAdapter extends BaseAdapter {
         ViewHolder holder = (ViewHolder) convertView.getTag();
 
         //(2)convert the view
-        holder.title.setText(articleList.get(position).getName());
-        String date = DateUtils.formatDateTime(context, articleList.get(position).getDate(), 0);
-        holder.date.setText(date);
+        holder.title.setText(articleList.get(position).getTitle());
 
 
         return convertView;
@@ -92,6 +87,5 @@ public class ArticleBaseAdapter extends BaseAdapter {
 
     class ViewHolder {
         TextView title;
-        TextView date;
     }
 }

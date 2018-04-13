@@ -5,39 +5,25 @@ package com.mobileacademy.newsreader.models;
  */
 
 public class Article {
-    private String name;
-    private Long date;
-    private String iconUrl;
+    private String title;
     private String url;
+    private Integer id;
 
-    public Article(String name, Long date) {
-        this.name = name;
-        this.date = date;
+
+    public Article(){
+
     }
 
-    public String getName() {
-
-        return name;
+    public Article(String title) {
+        this.title = title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getTitle() {
+        return title;
     }
 
-    public Long getDate() {
-        return date;
-    }
-
-    public void setDate(Long date) {
-        this.date = date;
-    }
-
-    public String getIconUrl() {
-        return iconUrl;
-    }
-
-    public void setIconUrl(String iconUrl) {
-        this.iconUrl = iconUrl;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getUrl() {
@@ -46,5 +32,13 @@ public class Article {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

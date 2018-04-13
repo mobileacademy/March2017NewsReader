@@ -3,6 +3,8 @@
     <dimen name="divider_height">2dp</dimen>
     <dimen name="min_clickable_size">48dp</dimen>
     <dimen name="small_pad">4dp</dimen>
+    <dimen name="normal_pad">8dp</dimen>
     <dimen name="title_text_size">18sp</dimen>
-    <dimen name="icon_size">32dp</dimen>
+    <dimen name="icon_size">48dp</dimen>
+    <dimen name="list_item_text_size">18sp</dimen>
 </resources>
