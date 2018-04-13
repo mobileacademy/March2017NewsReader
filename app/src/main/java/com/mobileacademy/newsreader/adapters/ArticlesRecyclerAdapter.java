@@ -1,6 +1,8 @@
 package com.mobileacademy.newsreader.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -41,24 +43,17 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.title.setText(articleList.get(position).getName());
-        String date = DateUtils.formatDateTime(context, articleList.get(position).getDate(), 0);
-        holder.date.setText(date);
-
+        holder.title.setText(articleList.get(position).getTitle());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(recyclerView.isAnimating()) return;
+                if (recyclerView.isAnimating()) return;
 
-                if(position == 0){
-                    articleList.add(new Article("New item", System.currentTimeMillis()));
-                    notifyItemInserted(getItemCount() - 1);
-                } else {
-                    articleList.remove(position);
-                    notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, getItemCount());
-                }
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(articleList.get(position).getUrl()));
+                context.startActivity(i);
+
             }
         });
     }

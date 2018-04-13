@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mobileacademy.newsreader">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,6 +23,19 @@
         <service
             android:name=".services.CounterService"
             android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name=".broadcastReceivers.LocaleChangedReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.LOCALE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".services.FetchPackagesIntentService"
             android:exported="false"></service>
     </application>
 
