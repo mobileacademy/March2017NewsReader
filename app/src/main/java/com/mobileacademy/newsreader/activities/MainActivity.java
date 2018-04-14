@@ -129,11 +129,11 @@ public class MainActivity extends AppCompatActivity {
     private List<Article> getArticles() {
 
         List<Article> list = new ArrayList<>();
-        list.add(new Article("Hacker News", System.currentTimeMillis()));
-        list.add(new Article("Android Authority Android Authority Android Authority Android Authority Android Authority Android Authority Android Authority ", System.currentTimeMillis()));
-        list.add(new Article("Medium", System.currentTimeMillis()));
-        list.add(new Article("Stack Overflow", System.currentTimeMillis()));
-        list.add(new Article("Vogella", System.currentTimeMillis()));
+        list.add(new Article("Hacker News"));
+        list.add(new Article("Android Authority"));
+        list.add(new Article("Medium"));
+        list.add(new Article("Stack Overflow"));
+        list.add(new Article("Vogella"));
 
 
         return list;

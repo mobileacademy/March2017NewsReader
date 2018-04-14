@@ -41,24 +41,17 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.title.setText(articleList.get(position).getName());
-        String date = DateUtils.formatDateTime(context, articleList.get(position).getDate(), 0);
-        holder.date.setText(date);
-
+        holder.title.setText(articleList.get(position).getTitle());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(recyclerView.isAnimating()) return;
+                if (recyclerView.isAnimating()) return;
 
-                if(position == 0){
-                    articleList.add(new Article("New item", System.currentTimeMillis()));
-                    notifyItemInserted(getItemCount() - 1);
-                } else {
-                    articleList.remove(position);
-                    notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, getItemCount());
-                }
+                articleList.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, getItemCount());
+
             }
         });
     }

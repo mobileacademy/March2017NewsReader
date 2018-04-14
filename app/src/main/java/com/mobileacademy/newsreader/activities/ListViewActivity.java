@@ -1,6 +1,5 @@
 package com.mobileacademy.newsreader.activities;
 
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,13 +27,13 @@ public class ListViewActivity extends AppCompatActivity {
         final List<Article> list = getArticles();
         final ArticleBaseAdapter articleAdapter = new ArticleBaseAdapter(this, list);
         listView.setAdapter(articleAdapter);
-        list.add(new Article("Mobile Academy1", System.currentTimeMillis()));
+        list.add(new Article("Mobile Academy1"));
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ListViewActivity.this, list.get(position - 1).getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListViewActivity.this, list.get(position - 1).getTitle(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -42,7 +41,7 @@ public class ListViewActivity extends AppCompatActivity {
             @Override
             public void run() {
                 Log.d(TAG, "run: ");
-                list.add(new Article("Mobile Academy", System.currentTimeMillis()));
+                list.add(new Article("Mobile Academy"));
                 articleAdapter.notifyDataSetChanged();
             }
         }, 500);
@@ -56,11 +55,11 @@ public class ListViewActivity extends AppCompatActivity {
     private List<Article> getArticles() {
 
         List<Article> list = new ArrayList<>();
-        list.add(new Article("Hacker News", System.currentTimeMillis()));
-        list.add(new Article("Android Authority", System.currentTimeMillis()));
-        list.add(new Article("Medium", System.currentTimeMillis()));
-        list.add(new Article("Stack Overflow", System.currentTimeMillis()));
-        list.add(new Article("Vogella", System.currentTimeMillis()));
+        list.add(new Article("Hacker News"));
+        list.add(new Article("Android Authority"));
+        list.add(new Article("Medium"));
+        list.add(new Article("Stack Overflow"));
+        list.add(new Article("Vogella"));
 
 
         return list;
