@@ -1,9 +1,14 @@
 package com.mobileacademy.newsreader.activities;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -11,31 +16,52 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.mobileacademy.newsreader.R;
 import com.mobileacademy.newsreader.adapters.ArticlesRecyclerAdapter;
+import com.mobileacademy.newsreader.api.HackerNewsApi;
+import com.mobileacademy.newsreader.api.OkHttpSample;
 import com.mobileacademy.newsreader.models.Article;
 import com.mobileacademy.newsreader.services.CounterService;
+import com.mobileacademy.newsreader.services.FetchPackagesIntentService;
+import com.mobileacademy.newsreader.utils.Util;
 
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    public static final String INTENT_ACTION_TIMES_UP = "Time's up";
 
-    DrawerLayout drawerLayout;
+    private DrawerLayout drawerLayout;
+    private List<Article> list;
+    private ArticlesRecyclerAdapter adapter;
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(INTENT_ACTION_TIMES_UP)) {
+                Toast.makeText(MainActivity.this, "Time's up!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -43,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
 //        RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(3, OrientationHelper.VERTICAL);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        List list = getArticles();
-        ArticlesRecyclerAdapter adapter = new ArticlesRecyclerAdapter(this, list, recyclerView);
+        list = new ArrayList();
+        adapter = new ArticlesRecyclerAdapter(this, list, recyclerView);
         recyclerView.setAdapter(adapter);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -55,14 +81,27 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         setupDrawer();
+        getStories();
+
+        startService(new Intent(this, FetchPackagesIntentService.class));
+
+        new FetchListAsyncTask(this).execute(HackerNewsApi.NEW_STORIES_ENDPOINT);
     }
 
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(INTENT_ACTION_TIMES_UP);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter);
 
-    private void setupDrawer(){
+        super.onStart();
+    }
+
+    private void setupDrawer() {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                //TODO: Implement click listeners
                 return false;
             }
         });
@@ -86,8 +125,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-//        onBackPressed()
-
         drawerLayout.openDrawer(GravityCompat.START);
         return super.onSupportNavigateUp();
     }
@@ -104,9 +141,10 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.menu_item_refresh: {
-                Toast.makeText(this, "Refresh", Toast.LENGTH_SHORT).show();
-                Intent service = new Intent(this, CounterService.class);
-                startService(service);
+                startService(new Intent(this, CounterService.class));
+                list.clear();
+                adapter.notifyDataSetChanged();
+                getStories();
                 return true;
             }
 
@@ -126,17 +164,74 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private List<Article> getArticles() {
 
-        List<Article> list = new ArrayList<>();
-        list.add(new Article("Hacker News"));
-        list.add(new Article("Android Authority"));
-        list.add(new Article("Medium"));
-        list.add(new Article("Stack Overflow"));
-        list.add(new Article("Vogella"));
+    private void getStories() {
 
+        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d(TAG, "onResponse: " + response);
 
-        return list;
+                Article article = Util.getArticleFromJson(response);
+
+                list.add(article);
+                adapter.notifyItemInserted(list.size() - 1);
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "onErrorResponse: ", error);
+            }
+        };
+
+        HackerNewsApi.getTopStories(this, listener, errorListener, this);
     }
 
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "onStop: ");
+        //cancel all requests issued by the current activity
+        HackerNewsApi.getRequestQueue(this).cancelAll(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        super.onStop();
+    }
+}
+
+class FetchListAsyncTask extends AsyncTask<String, Void, okhttp3.Response> {
+
+    private static final String TAG = "FetchListAsyncTask";
+    WeakReference<Activity> activityRef;
+
+    public FetchListAsyncTask(Activity activity) {
+        activityRef = new WeakReference(activity);
+
+    }
+
+    @Override
+    protected void onPreExecute() {
+
+        Activity activity = activityRef.get();
+        if(activity!=null) {
+            ((TextView) activity.findViewById(R.id.tv_status)).setText("Pending...");
+            super.onPreExecute();
+        }
+    }
+
+    @Override
+    protected okhttp3.Response doInBackground(String... strings) {
+
+        return OkHttpSample.getStoryIdsSyncOkhttp(strings[0]);
+    }
+
+    @Override
+    protected void onPostExecute(okhttp3.Response response) {
+        Activity activity = activityRef.get();
+        if(activity!=null) {
+            ((TextView) activity.findViewById(R.id.tv_status)).setText("Finished");
+            Log.d(TAG, "onPostExecute: " + response);
+            super.onPostExecute(response);
+        }
+    }
 }
