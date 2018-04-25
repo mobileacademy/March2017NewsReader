@@ -1,18 +1,24 @@
 package com.mobileacademy.newsreader.models;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 /**
  * Created by Daniela on 3/24/18.
  */
 
+@Entity(tableName = "article_table")
 public class Article {
-    private String title;
-    private String url;
+
+    @PrimaryKey
     private Integer id;
 
+    private String title;
+    private String url;
 
-    public Article(){
 
-    }
+    public Article() {}
 
     public Article(String title) {
         this.title = title;
