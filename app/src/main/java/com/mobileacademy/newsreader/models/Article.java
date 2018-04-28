@@ -1,6 +1,4 @@
 package com.mobileacademy.newsreader.models;
-
-import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
@@ -46,5 +44,12 @@ public class Article {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+
+    @Override
+    public String toString() {
+//           %[argument_index$][flags][width][.precision]conversion
+        return String.format("[%1s: %2s]", id, title.substring(0, 7));
     }
 }

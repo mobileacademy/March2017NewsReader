@@ -18,13 +18,22 @@ public class ArticlesRepository {
 
     private ArticlesDao articlesDao;
     private LiveData<List<Article>> articlesList;
+    private static ArticlesRepository INSTANCE;
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    public ArticlesRepository(Application context) {
-        ArticlesDatabase db = ArticlesDatabase.getDatabase(context);
+    private ArticlesRepository(Application context) {
+        ArticlesDatabase db = ArticlesDatabase.getDatabase(context.getApplicationContext());
         articlesDao = db.articlesDao();
         articlesList = articlesDao.getAll();
+    }
+
+    public static ArticlesRepository getInstance(Application context){
+        if(INSTANCE == null){
+            INSTANCE =  new ArticlesRepository(context);
+        }
+
+        return INSTANCE;
     }
 
     public LiveData<List<Article>> getArticlesList() {
@@ -32,7 +41,6 @@ public class ArticlesRepository {
     }
 
     public void insert(final Article article) {
-
         executorService.submit(new Runnable() {
             @Override
             public void run() {
@@ -41,12 +49,21 @@ public class ArticlesRepository {
         });
     }
 
-    public void insert(final List<Article> articles) {
+    public void updateData(final List<Article> articles) {
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                articlesDao.updateData(articles);
+            }
+        });
+    }
+
+    public void deleteAll(){
 
         executorService.submit(new Runnable() {
             @Override
             public void run() {
-                articlesDao.insertAll(articles);
+                articlesDao.deleteAll();
             }
         });
     }

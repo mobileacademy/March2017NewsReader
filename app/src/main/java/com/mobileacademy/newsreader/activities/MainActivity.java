@@ -36,8 +36,6 @@ import com.mobileacademy.newsreader.api.HackerNewsApi;
 import com.mobileacademy.newsreader.api.OkHttpSample;
 import com.mobileacademy.newsreader.data.ArticlesViewModel;
 import com.mobileacademy.newsreader.models.Article;
-import com.mobileacademy.newsreader.services.CounterService;
-import com.mobileacademy.newsreader.services.FetchPackagesIntentService;
 import com.mobileacademy.newsreader.utils.Util;
 
 import org.json.JSONObject;
@@ -151,9 +149,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.menu_item_refresh: {
-                startService(new Intent(this, CounterService.class));
-                list.clear();
-                adapter.notifyDataSetChanged();
+                articlesViewModel.deleteAll();
                 getStories();
                 return true;
             }

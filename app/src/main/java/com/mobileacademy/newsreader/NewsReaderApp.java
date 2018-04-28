@@ -2,6 +2,8 @@ package com.mobileacademy.newsreader;
 
 import android.app.Application;
 
+import com.mobileacademy.newsreader.services.FetchArticlesOnWifiTaskService;
+
 /**
  * Created by danielastamati on 25/04/2018.
  */
@@ -18,6 +20,8 @@ public class NewsReaderApp extends Application {
     public void onCreate() {
         super.onCreate();
         INSTANCE = this;
+
+        FetchArticlesOnWifiTaskService.schedule(this);
     }
 
     public static NewsReaderApp getInstance(){

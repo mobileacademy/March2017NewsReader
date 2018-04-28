@@ -16,7 +16,7 @@ public class ArticlesViewModel extends ViewModel{
     private LiveData<List<Article>> articlesList;
 
     public ArticlesViewModel (){
-        articlesRepository = new ArticlesRepository(NewsReaderApp.getInstance());
+        articlesRepository = ArticlesRepository.getInstance(NewsReaderApp.getInstance());
         articlesList = articlesRepository.getArticlesList();
     }
 
@@ -24,11 +24,12 @@ public class ArticlesViewModel extends ViewModel{
         return articlesList;
     }
 
-    public void insertAll(List<Article> articleList){
-        articlesRepository.insert(articleList);
+    public void deleteAll(){
+        articlesRepository.deleteAll();
     }
 
     public void insert(Article article){
         articlesRepository.insert(article);
     }
+
 }
