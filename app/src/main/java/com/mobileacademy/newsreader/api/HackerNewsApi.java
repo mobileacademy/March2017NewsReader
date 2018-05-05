@@ -20,8 +20,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -106,7 +104,7 @@ public class HackerNewsApi {
                 RequestFuture<JSONObject> futureArticle = RequestFuture.newFuture();
                 String itemUrl = buildArticleUrl(idsJsonArray.getString(i));
                 loadArticleSync(context, itemUrl, futureArticle);
-                JSONObject articleJson = futureArticle.get();
+                JSONObject articleJson = futureArticle.get(TIMEOUT_S, TimeUnit.SECONDS);
                 articles.add(Util.getArticleFromJson(articleJson));
             }
         }catch (InterruptedException | ExecutionException | TimeoutException | JSONException e){

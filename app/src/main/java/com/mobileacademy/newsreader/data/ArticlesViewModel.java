@@ -2,6 +2,8 @@ package com.mobileacademy.newsreader.data;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
+
 import com.mobileacademy.newsreader.NewsReaderApp;
 import com.mobileacademy.newsreader.models.Article;
 

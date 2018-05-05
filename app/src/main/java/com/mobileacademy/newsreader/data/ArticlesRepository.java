@@ -22,13 +22,13 @@ public class ArticlesRepository {
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    private ArticlesRepository(Application context) {
+    private ArticlesRepository(Context context) {
         ArticlesDatabase db = ArticlesDatabase.getDatabase(context.getApplicationContext());
         articlesDao = db.articlesDao();
         articlesList = articlesDao.getAll();
     }
 
-    public static ArticlesRepository getInstance(Application context){
+    public static ArticlesRepository getInstance(Context context){
         if(INSTANCE == null){
             INSTANCE =  new ArticlesRepository(context);
         }

@@ -45,6 +45,7 @@ public class Article {
     public void setId(Integer id) {
         this.id = id;
     }
+    //...
 
 
     @Override

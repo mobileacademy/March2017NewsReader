@@ -4,14 +4,12 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.RequestFuture;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.PeriodicTask;
+import com.google.android.gms.gcm.Task;
 import com.google.android.gms.gcm.TaskParams;
 import com.mobileacademy.newsreader.api.HackerNewsApi;
 import com.mobileacademy.newsreader.data.ArticlesRepository;
@@ -27,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 public class FetchArticlesOnWifiTaskService extends GcmTaskService {
 
-    private static final long EXECUTION_FREQUENCY_S = TimeUnit.HOURS.toSeconds(12);
+    private static final long EXECUTION_FREQUENCY_S = 2; //TODO: TimeUnit.HOURS.toSeconds(12);
     private static final String TAG = "FetchArticlesOnWifiTask";
 
     public static void schedule(Application context){
@@ -41,6 +39,8 @@ public class FetchArticlesOnWifiTaskService extends GcmTaskService {
         PeriodicTask task = new PeriodicTask.Builder()
                 .setService(FetchArticlesOnWifiTaskService.class)
                 .setPeriod(EXECUTION_FREQUENCY_S)
+                .setRequiredNetwork(Task.NETWORK_STATE_UNMETERED)
+                .setRequiresCharging(true)
                 .setTag(TAG)
                 .setUpdateCurrent(true)
                 .setPersisted(true)

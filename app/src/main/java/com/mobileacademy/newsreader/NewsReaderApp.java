@@ -12,16 +12,11 @@ public class NewsReaderApp extends Application {
 
     private static NewsReaderApp INSTANCE;
 
-    public NewsReaderApp getINSTANCE() {
-        return INSTANCE;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
         INSTANCE = this;
 
-        FetchArticlesOnWifiTaskService.schedule(this);
     }
 
     public static NewsReaderApp getInstance(){
