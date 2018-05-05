@@ -1,12 +1,15 @@
 package com.mobileacademy.newsreader.activities;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
@@ -31,9 +34,8 @@ import com.mobileacademy.newsreader.R;
 import com.mobileacademy.newsreader.adapters.ArticlesRecyclerAdapter;
 import com.mobileacademy.newsreader.api.HackerNewsApi;
 import com.mobileacademy.newsreader.api.OkHttpSample;
+import com.mobileacademy.newsreader.data.ArticlesViewModel;
 import com.mobileacademy.newsreader.models.Article;
-import com.mobileacademy.newsreader.services.CounterService;
-import com.mobileacademy.newsreader.services.FetchPackagesIntentService;
 import com.mobileacademy.newsreader.utils.Util;
 
 import org.json.JSONObject;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private List<Article> list;
     private ArticlesRecyclerAdapter adapter;
+    private ArticlesViewModel articlesViewModel;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -66,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         RecyclerView recyclerView = findViewById(R.id.rv_articles);
-//        RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(3, OrientationHelper.VERTICAL);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         list = new ArrayList();
@@ -80,12 +82,18 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        articlesViewModel = ViewModelProviders.of(this).get(ArticlesViewModel.class);
+        articlesViewModel.getArticlesList().observe(this, new Observer<List<Article>>() {
+            @Override
+            public void onChanged(@Nullable List<Article> articleList) {
+                list.clear();
+                list.addAll(articleList);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
         setupDrawer();
         getStories();
-
-        startService(new Intent(this, FetchPackagesIntentService.class));
-
-        new FetchListAsyncTask(this).execute(HackerNewsApi.NEW_STORIES_ENDPOINT);
     }
 
     @Override
@@ -141,9 +149,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.menu_item_refresh: {
-                startService(new Intent(this, CounterService.class));
-                list.clear();
-                adapter.notifyDataSetChanged();
+                articlesViewModel.deleteAll();
                 getStories();
                 return true;
             }
@@ -173,9 +179,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onResponse: " + response);
 
                 Article article = Util.getArticleFromJson(response);
-
-                list.add(article);
-                adapter.notifyItemInserted(list.size() - 1);
+                articlesViewModel.insert(article);
             }
         };
 
@@ -199,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
+//Async task example
 class FetchListAsyncTask extends AsyncTask<String, Void, okhttp3.Response> {
 
     private static final String TAG = "FetchListAsyncTask";
@@ -206,7 +211,6 @@ class FetchListAsyncTask extends AsyncTask<String, Void, okhttp3.Response> {
 
     public FetchListAsyncTask(Activity activity) {
         activityRef = new WeakReference(activity);
-
     }
 
     @Override
